@@ -13,12 +13,19 @@ A custom ComfyUI node that displays up to 64 recent images from a folder as numb
 - **Efficient Caching**: Thumbnails are cached for better performance
 - **Multiple Formats**: Supports JPG, JPEG, PNG, BMP, TIFF, and WEBP images
 
-## Quick Start
+## Installation
+
+- **Recommended:** Use ComfyUI Manager's "Install via Git URL" feature and enter:
+  ```
+  https://github.com/benstaniford/comfy-contact-sheet-image-loader.git
+  ```
+### Or for manual installation: 
 
 1. Copy this folder to your ComfyUI `custom_nodes` directory
 2. Restart ComfyUI
 3. Add the "Contact Sheet Image Loader" node to your workflow
 4. Set the folder path and start browsing your images!
+
 
 ## Node Parameters
 
