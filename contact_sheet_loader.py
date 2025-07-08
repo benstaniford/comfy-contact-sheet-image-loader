@@ -60,7 +60,11 @@ class ContactSheetImageLoader:
                     "max": 8,
                     "tooltip": "Number of rows (1=8 images, 2=16, ..., 8=64)"
                 }),
-                "load_trigger": (any_type, {}),
+            },
+            "optional": {
+                "load_trigger": (any_type, {
+                    "tooltip": "Connect any output here to refresh thumbnails (optional)"
+                }),
             },
         }
     
