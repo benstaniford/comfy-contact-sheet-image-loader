@@ -1,13 +1,15 @@
 # ComfyUI Contact Sheet Image Loader
 
-A custom ComfyUI node that displays the 8 most recent images from a folder as thumbnails in a horizontal contact sheet format, allowing you to easily select and load one of them.
+A custom ComfyUI node that displays up to 64 recent images from a folder as numbered thumbnails in a flexible grid contact sheet format, allowing you to easily select and load one of them for post-processing.
 
 ## Features
 
-- **Visual Selection**: Shows up to 8 thumbnails of the most recent images in a folder
+- **Visual Selection**: Shows up to 64 numbered thumbnails of the most recent images in a folder
+- **Flexible Grid Layout**: Choose 1-8 rows (8, 16, 24, 32, 40, 48, 56, or 64 images)
+- **Numbered Thumbnails**: Each thumbnail displays a number (1-64) for easy identification and loading via the selector
 - **Automatic Sorting**: Images are automatically sorted by modification time (newest first)
-- **Flexible Selection**: Choose any of the 8 displayed images using a simple 1-8 selector
-- **Refreshable**: Update the thumbnail view by changing the trigger value
+- **Smart Refresh**: Updates automatically when connected load_trigger changes
+- **Default Output Folder**: Automatically defaults to ComfyUI's output directory, but you can change it
 - **Efficient Caching**: Thumbnails are cached for better performance
 - **Multiple Formats**: Supports JPG, JPEG, PNG, BMP, TIFF, and WEBP images
 
@@ -20,23 +22,28 @@ A custom ComfyUI node that displays the 8 most recent images from a folder as th
 
 ## Node Parameters
 
-- **folder_path**: Path to folder containing your images
-- **source**: Connect any output here to refresh thumbnails (required)
-- **selected_image**: Which image to load (1-8, left to right)
-- **thumbnail_size**: Size of thumbnails in pixels (64-512)
+- **folder_path**: Path to folder containing your images (defaults to ComfyUI output folder)
+- **load_trigger**: Connect any output here to refresh thumbnails (required)
+- **selected_image**: Which image to load (1-64, based on numbered thumbnails)
+- **thumbnail_size**: Size of thumbnails in pixels (64-512, default 256)
+- **rows**: Number of rows in contact sheet (1-8, determines total images shown)
 
 ## Outputs
 
-- **contact_sheet**: Visual contact sheet showing up to 8 thumbnails
+- **contact_sheet**: Visual contact sheet showing numbered thumbnails in a grid
 - **image**: The selected image tensor
 - **mask**: Corresponding mask (useful for further processing)
 - **filename**: Name of the selected file
 
+## Grid Layout Examples
+
+- **1 Row**: 8 images in a single horizontal row
+- **2 Rows**: 16 images in a 8×2 grid
+- **4 Rows**: 32 images in a 8×4 grid  
+- **8 Rows**: 64 images in a 8×8 grid
+
 ## Use Cases
 
-- Quickly browse and select from recent AI-generated images
-- Preview images from output folders before loading
+- Quickly browse and select from recent AI-generated images, selecting them for post-processing
 - Create workflows that process the most recent images
-- Build image selection interfaces for batch processing
-
-See [USAGE.md](USAGE.md) for detailed installation and usage instructions.
+- Review and select from up to 64 recent images at once
