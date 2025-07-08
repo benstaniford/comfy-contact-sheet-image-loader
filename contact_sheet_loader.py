@@ -5,6 +5,13 @@ from PIL import Image
 import torch
 from typing import List, Tuple, Optional
 
+class AnyType(str):
+    """A special class that is always equal in not equal comparisons. Credit to pythongosssss"""
+    def __ne__(self, __value: object) -> bool:
+        return False
+
+any_type = AnyType("*")
+
 class ContactSheetImageLoader:
     """
     A ComfyUI node that displays the 8 most recent images from a folder as thumbnails
@@ -38,13 +45,9 @@ class ContactSheetImageLoader:
                     "max": 512,
                     "step": 16,
                     "tooltip": "Size of thumbnails in pixels"
-                })
+                }),
+                "source": (any_type, {}),
             },
-            "optional": {
-                "trigger": ("*", {
-                    "tooltip": "Connect any output here to refresh thumbnails"
-                })
-            }
         }
     
     RETURN_TYPES = ("IMAGE", "MASK", "STRING")
@@ -156,17 +159,17 @@ class ContactSheetImageLoader:
             placeholder_mask = np.ones((512, 512), dtype=np.float32)
             return placeholder_img, placeholder_mask, f"error_{os.path.basename(image_path)}"
     
-    def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, trigger=None):
+    def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, source=None):
         """Main function called by ComfyUI."""
         
         # Check if we need to refresh the image list
         if (self.last_folder != folder_path or 
-            self.last_trigger != trigger or 
+            self.last_trigger != source or 
             not self.cached_images):
             
             self.cached_images = self.get_recent_images(folder_path, 8)
             self.last_folder = folder_path
-            self.last_trigger = trigger
+            self.last_trigger = source
         
         # Load the selected image
         image, mask, filename = self.load_selected_image(self.cached_images, selected_image)
