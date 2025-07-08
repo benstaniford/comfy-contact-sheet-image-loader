@@ -23,6 +23,7 @@ class ContactSheetImageLoader:
         self.thumbnail_cache = {}
         self.last_folder = None
         self.last_trigger = None
+        self.last_rows = None
         self.cached_images = []
         
     @classmethod
@@ -43,8 +44,8 @@ class ContactSheetImageLoader:
                 "selected_image": ("INT", {
                     "default": 1,
                     "min": 1,
-                    "max": 8,
-                    "tooltip": "Select image 1-8 from the contact sheet"
+                    "max": 32,
+                    "tooltip": "Select image 1-32 from the contact sheet"
                 }),
                 "thumbnail_size": ("INT", {
                     "default": 256,
@@ -52,6 +53,12 @@ class ContactSheetImageLoader:
                     "max": 512,
                     "step": 16,
                     "tooltip": "Size of thumbnails in pixels"
+                }),
+                "rows": ("INT", {
+                    "default": 1,
+                    "min": 1,
+                    "max": 4,
+                    "tooltip": "Number of rows (1=8 images, 2=16, 3=24, 4=32)"
                 }),
                 "source": (any_type, {}),
             },
@@ -63,7 +70,7 @@ class ContactSheetImageLoader:
     CATEGORY = "image/loaders"
     OUTPUT_NODE = False
     
-    def get_recent_images(self, folder_path: str, max_count: int = 8) -> List[str]:
+    def get_recent_images(self, folder_path: str, max_count: int = 32) -> List[str]:
         """Get the most recent image files from the specified folder."""
         if not os.path.exists(folder_path):
             return []
@@ -112,20 +119,28 @@ class ContactSheetImageLoader:
             print(f"Error creating thumbnail for {image_path}: {e}")
             return None
     
-    def create_contact_sheet(self, image_paths: List[str], thumbnail_size: int) -> np.ndarray:
-        """Create a horizontal contact sheet from the image paths."""
+    def create_contact_sheet(self, image_paths: List[str], thumbnail_size: int, rows: int = 1) -> np.ndarray:
+        """Create a contact sheet from the image paths with specified number of rows."""
+        cols = 8  # Always 8 columns
+        max_images = rows * cols
+        
         if not image_paths:
             # Return a placeholder image
-            placeholder = np.full((thumbnail_size, thumbnail_size * 8, 3), 0.5, dtype=np.float32)
+            placeholder = np.full((thumbnail_size * rows, thumbnail_size * cols, 3), 0.5, dtype=np.float32)
             return placeholder
         
-        contact_sheet_width = thumbnail_size * 8
-        contact_sheet = np.full((thumbnail_size, contact_sheet_width, 3), 0.3, dtype=np.float32)
+        contact_sheet_height = thumbnail_size * rows
+        contact_sheet_width = thumbnail_size * cols
+        contact_sheet = np.full((contact_sheet_height, contact_sheet_width, 3), 0.3, dtype=np.float32)
         
-        for i, image_path in enumerate(image_paths[:8]):
-            if i >= 8:
+        for i, image_path in enumerate(image_paths[:max_images]):
+            if i >= max_images:
                 break
                 
+            # Calculate row and column position
+            row = i // cols
+            col = i % cols
+            
             thumbnail = self.create_thumbnail(image_path, thumbnail_size)
             if thumbnail is not None:
                 # Convert back to PIL Image to add the number
@@ -167,9 +182,13 @@ class ContactSheetImageLoader:
                 # Convert back to numpy array
                 thumbnail_with_number = np.array(thumbnail_pil).astype(np.float32) / 255.0
                 
-                x_start = i * thumbnail_size
+                # Calculate position in contact sheet
+                y_start = row * thumbnail_size
+                y_end = y_start + thumbnail_size
+                x_start = col * thumbnail_size
                 x_end = x_start + thumbnail_size
-                contact_sheet[:, x_start:x_end, :] = thumbnail_with_number
+                
+                contact_sheet[y_start:y_end, x_start:x_end, :] = thumbnail_with_number
         
         return contact_sheet
     
@@ -205,8 +224,11 @@ class ContactSheetImageLoader:
             placeholder_mask = np.ones((512, 512), dtype=np.float32)
             return placeholder_img, placeholder_mask, f"error_{os.path.basename(image_path)}"
     
-    def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, source=None):
+    def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, rows: int, source=None):
         """Main function called by ComfyUI."""
+        
+        # Calculate max images based on rows
+        max_images = rows * 8
         
         # Convert source to a comparable value (hash for tensors, direct value for others)
         if hasattr(source, 'shape') and hasattr(source, 'dtype'):  # It's a tensor
@@ -217,14 +239,16 @@ class ContactSheetImageLoader:
         # Check if we need to refresh the image list
         if (self.last_folder != folder_path or 
             self.last_trigger != source_key or 
+            self.last_rows != rows or
             not self.cached_images):
             
-            self.cached_images = self.get_recent_images(folder_path, 8)
+            self.cached_images = self.get_recent_images(folder_path, max_images)
             self.last_folder = folder_path
             self.last_trigger = source_key
+            self.last_rows = rows
         
         # Create the contact sheet
-        contact_sheet = self.create_contact_sheet(self.cached_images, thumbnail_size)
+        contact_sheet = self.create_contact_sheet(self.cached_images, thumbnail_size, rows)
         
         # Load the selected image
         image, mask, filename = self.load_selected_image(self.cached_images, selected_image)
