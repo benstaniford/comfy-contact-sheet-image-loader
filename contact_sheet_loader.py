@@ -162,14 +162,20 @@ class ContactSheetImageLoader:
     def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, source=None):
         """Main function called by ComfyUI."""
         
+        # Convert source to a comparable value (hash for tensors, direct value for others)
+        if hasattr(source, 'shape') and hasattr(source, 'dtype'):  # It's a tensor
+            source_key = hash(str(source.shape) + str(source.dtype) + str(source.sum().item() if source.numel() > 0 else 0))
+        else:
+            source_key = source
+        
         # Check if we need to refresh the image list
         if (self.last_folder != folder_path or 
-            self.last_trigger != source or 
+            self.last_trigger != source_key or 
             not self.cached_images):
             
             self.cached_images = self.get_recent_images(folder_path, 8)
             self.last_folder = folder_path
-            self.last_trigger = source
+            self.last_trigger = source_key
         
         # Create the contact sheet
         contact_sheet = self.create_contact_sheet(self.cached_images, thumbnail_size)
