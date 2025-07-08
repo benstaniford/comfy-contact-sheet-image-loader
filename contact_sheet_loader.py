@@ -26,11 +26,8 @@ class ContactSheetImageLoader:
                     "multiline": False,
                     "tooltip": "Path to folder containing images"
                 }),
-                "trigger": ("INT", {
-                    "default": 0, 
-                    "min": 0, 
-                    "max": 999999,
-                    "tooltip": "Change this value to refresh thumbnails"
+                "trigger": ("*", {
+                    "tooltip": "Connect any output here to refresh thumbnails"
                 }),
                 "selected_image": ("INT", {
                     "default": 1,
