@@ -2,6 +2,10 @@
 
 A custom ComfyUI node that displays up to 64 recent images from a folder as numbered thumbnails in a flexible grid contact sheet format, allowing you to easily select and load one of them for post-processing.
 
+## Screenshot
+
+![image](https://github.com/user-attachments/assets/21de481d-236e-4149-8650-948f8e2051b5)
+
 ## Features
 
 - **Visual Selection**: Shows up to 64 numbered thumbnails of the most recent images in a folder
