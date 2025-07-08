@@ -21,12 +21,13 @@ A custom ComfyUI node that displays the 8 most recent images from a folder as th
 ## Node Parameters
 
 - **folder_path**: Path to folder containing your images
-- **trigger**: Increment to refresh thumbnails (useful after adding new images)
+- **source**: Connect any output here to refresh thumbnails (required)
 - **selected_image**: Which image to load (1-8, left to right)
 - **thumbnail_size**: Size of thumbnails in pixels (64-512)
 
 ## Outputs
 
+- **contact_sheet**: Visual contact sheet showing up to 8 thumbnails
 - **image**: The selected image tensor
 - **mask**: Corresponding mask (useful for further processing)
 - **filename**: Name of the selected file

@@ -50,8 +50,8 @@ class ContactSheetImageLoader:
             },
         }
     
-    RETURN_TYPES = ("IMAGE", "MASK", "STRING")
-    RETURN_NAMES = ("image", "mask", "filename")
+    RETURN_TYPES = ("IMAGE", "IMAGE", "MASK", "STRING")
+    RETURN_NAMES = ("contact_sheet", "image", "mask", "filename")
     FUNCTION = "load_image"
     CATEGORY = "image/loaders"
     OUTPUT_NODE = False
@@ -171,14 +171,18 @@ class ContactSheetImageLoader:
             self.last_folder = folder_path
             self.last_trigger = source
         
+        # Create the contact sheet
+        contact_sheet = self.create_contact_sheet(self.cached_images, thumbnail_size)
+        
         # Load the selected image
         image, mask, filename = self.load_selected_image(self.cached_images, selected_image)
         
         # Convert to torch tensors with batch dimension
+        contact_sheet_tensor = torch.from_numpy(contact_sheet).unsqueeze(0)  # Add batch dimension
         image_tensor = torch.from_numpy(image).unsqueeze(0)  # Add batch dimension
         mask_tensor = torch.from_numpy(mask).unsqueeze(0)    # Add batch dimension
         
-        return (image_tensor, mask_tensor, filename)
+        return (contact_sheet_tensor, image_tensor, mask_tensor, filename)
 
 # Node mapping for ComfyUI
 NODE_CLASS_MAPPINGS = {
