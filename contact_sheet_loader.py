@@ -26,9 +26,6 @@ class ContactSheetImageLoader:
                     "multiline": False,
                     "tooltip": "Path to folder containing images"
                 }),
-                "trigger": ("*", {
-                    "tooltip": "Connect any output here to refresh thumbnails"
-                }),
                 "selected_image": ("INT", {
                     "default": 1,
                     "min": 1,
@@ -41,6 +38,11 @@ class ContactSheetImageLoader:
                     "max": 512,
                     "step": 16,
                     "tooltip": "Size of thumbnails in pixels"
+                })
+            },
+            "optional": {
+                "trigger": ("*", {
+                    "tooltip": "Connect any output here to refresh thumbnails"
                 })
             }
         }
@@ -154,7 +156,7 @@ class ContactSheetImageLoader:
             placeholder_mask = np.ones((512, 512), dtype=np.float32)
             return placeholder_img, placeholder_mask, f"error_{os.path.basename(image_path)}"
     
-    def load_image(self, folder_path: str, trigger: int, selected_image: int, thumbnail_size: int):
+    def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, trigger=None):
         """Main function called by ComfyUI."""
         
         # Check if we need to refresh the image list
