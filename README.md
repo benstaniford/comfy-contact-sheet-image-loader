@@ -24,8 +24,10 @@ A custom ComfyUI node that displays up to 64 recent images from a folder as numb
 1. Copy this folder to your ComfyUI `custom_nodes` directory
 2. Restart ComfyUI
 3. Add the "Contact Sheet Image Loader" node to your workflow
-4. Set the folder path and start browsing your images!
-
+4. Attach a load_trigger from some point in your work flow to auto refresh the contact sheet
+5. Attach a Preview Image node to view the contact sheet
+6. Set the folder path (or accept comfy's output folder as default) and start browsing your images!
+7. Connect the output image/mask nodes and use the numbered images on the contact sheet to load and post-process your gens
 
 ## Node Parameters
 
@@ -37,7 +39,7 @@ A custom ComfyUI node that displays up to 64 recent images from a folder as numb
 
 ## Outputs
 
-- **contact_sheet**: Visual contact sheet showing numbered thumbnails in a grid
+- **contact_sheet**: Visual contact sheet showing numbered thumbnails in a grid (intended to be used with ComfyUI's **Preview Image** node)
 - **image**: The selected image tensor
 - **mask**: Corresponding mask (useful for further processing)
 - **filename**: Name of the selected file
