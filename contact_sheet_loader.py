@@ -1,7 +1,7 @@
 import os
 import glob
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import torch
 from typing import List, Tuple, Optional
 import folder_paths
@@ -128,9 +128,48 @@ class ContactSheetImageLoader:
                 
             thumbnail = self.create_thumbnail(image_path, thumbnail_size)
             if thumbnail is not None:
+                # Convert back to PIL Image to add the number
+                thumbnail_pil = Image.fromarray((thumbnail * 255).astype(np.uint8))
+                
+                # Add number to bottom right corner
+                draw = ImageDraw.Draw(thumbnail_pil)
+                number_text = str(i + 1)
+                
+                # Try to use a reasonable font size based on thumbnail size
+                try:
+                    font_size = max(12, thumbnail_size // 12)
+                    font = ImageFont.truetype("arial.ttf", font_size)
+                except:
+                    # Fallback to default font if arial.ttf is not available
+                    try:
+                        font = ImageFont.load_default()
+                    except:
+                        font = None
+                
+                if font:
+                    # Get text dimensions
+                    bbox = draw.textbbox((0, 0), number_text, font=font)
+                    text_width = bbox[2] - bbox[0]
+                    text_height = bbox[3] - bbox[1]
+                    
+                    # Position in bottom right corner with small padding
+                    x = thumbnail_size - text_width - 4
+                    y = thumbnail_size - text_height - 4
+                    
+                    # Draw background circle/rectangle for better visibility
+                    padding = 2
+                    draw.ellipse([x - padding, y - padding, x + text_width + padding, y + text_height + padding], 
+                                fill=(0, 0, 0, 180))  # Semi-transparent black background
+                    
+                    # Draw the number in white
+                    draw.text((x, y), number_text, font=font, fill=(255, 255, 255))
+                
+                # Convert back to numpy array
+                thumbnail_with_number = np.array(thumbnail_pil).astype(np.float32) / 255.0
+                
                 x_start = i * thumbnail_size
                 x_end = x_start + thumbnail_size
-                contact_sheet[:, x_start:x_end, :] = thumbnail
+                contact_sheet[:, x_start:x_end, :] = thumbnail_with_number
         
         return contact_sheet
     
