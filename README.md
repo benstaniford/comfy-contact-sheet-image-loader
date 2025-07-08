@@ -1,4 +1,4 @@
-# ComfyUI Contact Sheet Image Loader
+# Comfy Contact Sheet Image Loader
 
 A custom ComfyUI node that displays up to 64 recent images from a folder as numbered thumbnails in a flexible grid contact sheet format, allowing you to easily select and load one of them for post-processing.
 
