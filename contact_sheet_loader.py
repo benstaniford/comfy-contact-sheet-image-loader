@@ -60,7 +60,7 @@ class ContactSheetImageLoader:
                     "max": 8,
                     "tooltip": "Number of rows (1=8 images, 2=16, ..., 8=64)"
                 }),
-                "source": (any_type, {}),
+                "load_trigger": (any_type, {}),
             },
         }
     
@@ -224,17 +224,17 @@ class ContactSheetImageLoader:
             placeholder_mask = np.ones((512, 512), dtype=np.float32)
             return placeholder_img, placeholder_mask, f"error_{os.path.basename(image_path)}"
     
-    def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, rows: int, source=None):
+    def load_image(self, folder_path: str, selected_image: int, thumbnail_size: int, rows: int, load_trigger=None):
         """Main function called by ComfyUI."""
         
         # Calculate max images based on rows
         max_images = rows * 8
         
-        # Convert source to a comparable value (hash for tensors, direct value for others)
-        if hasattr(source, 'shape') and hasattr(source, 'dtype'):  # It's a tensor
-            source_key = hash(str(source.shape) + str(source.dtype) + str(source.sum().item() if source.numel() > 0 else 0))
+        # Convert load_trigger to a comparable value (hash for tensors, direct value for others)
+        if hasattr(load_trigger, 'shape') and hasattr(load_trigger, 'dtype'):  # It's a tensor
+            source_key = hash(str(load_trigger.shape) + str(load_trigger.dtype) + str(load_trigger.sum().item() if load_trigger.numel() > 0 else 0))
         else:
-            source_key = source
+            source_key = load_trigger
         
         # Check if we need to refresh the image list
         if (self.last_folder != folder_path or 
