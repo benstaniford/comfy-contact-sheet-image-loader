@@ -205,3 +205,29 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ComfyUI specific
+*.pth
+*.ckpt
+*.safetensors
+
+# Image cache and test files
+test_images/
+*.tmp
+cache/
+thumbnails/
+
+# Development and testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db

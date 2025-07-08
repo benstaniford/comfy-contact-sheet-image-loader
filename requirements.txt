@@ -1,0 +1,11 @@
+# Requirements for ComfyUI Contact Sheet Image Loader
+# These are typically already available in ComfyUI installations
+
+# Core dependencies (usually included with ComfyUI)
+torch>=1.13.0
+torchvision>=0.14.0
+Pillow>=9.0.0
+numpy>=1.21.0
+
+# Optional: for better image handling
+opencv-python>=4.5.0

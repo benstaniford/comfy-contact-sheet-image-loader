@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comfy-contact-sheet-image-loader"
+version = "1.0.0"
+description = "A ComfyUI custom node for loading images from a contact sheet of recent files"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Contact Sheet Loader", email = "contact@example.com"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "torch>=1.13.0",
+    "torchvision>=0.14.0",
+    "Pillow>=9.0.0",
+    "numpy>=1.21.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "black>=22.0",
+    "flake8>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/comfy-contact-sheet-image-loader"
+Repository = "https://github.com/yourusername/comfy-contact-sheet-image-loader"
+Issues = "https://github.com/yourusername/comfy-contact-sheet-image-loader/issues"
+
+[tool.setuptools]
+packages = ["contact_sheet_loader"]
+package-dir = {"contact_sheet_loader" = "."}
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
