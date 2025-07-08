@@ -44,8 +44,8 @@ class ContactSheetImageLoader:
                 "selected_image": ("INT", {
                     "default": 1,
                     "min": 1,
-                    "max": 32,
-                    "tooltip": "Select image 1-32 from the contact sheet"
+                    "max": 64,
+                    "tooltip": "Select image 1-64 from the contact sheet"
                 }),
                 "thumbnail_size": ("INT", {
                     "default": 256,
@@ -57,8 +57,8 @@ class ContactSheetImageLoader:
                 "rows": ("INT", {
                     "default": 1,
                     "min": 1,
-                    "max": 4,
-                    "tooltip": "Number of rows (1=8 images, 2=16, 3=24, 4=32)"
+                    "max": 8,
+                    "tooltip": "Number of rows (1=8 images, 2=16, ..., 8=64)"
                 }),
                 "source": (any_type, {}),
             },
@@ -70,7 +70,7 @@ class ContactSheetImageLoader:
     CATEGORY = "image/loaders"
     OUTPUT_NODE = False
     
-    def get_recent_images(self, folder_path: str, max_count: int = 32) -> List[str]:
+    def get_recent_images(self, folder_path: str, max_count: int = 64) -> List[str]:
         """Get the most recent image files from the specified folder."""
         if not os.path.exists(folder_path):
             return []
