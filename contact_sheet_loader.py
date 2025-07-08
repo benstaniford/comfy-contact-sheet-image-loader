@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 import torch
 from typing import List, Tuple, Optional
+import folder_paths
 
 class AnyType(str):
     """A special class that is always equal in not equal comparisons. Credit to pythongosssss"""
@@ -26,10 +27,16 @@ class ContactSheetImageLoader:
         
     @classmethod
     def INPUT_TYPES(cls):
+        # Get ComfyUI's output directory as default
+        try:
+            default_folder = folder_paths.get_output_directory()
+        except:
+            default_folder = ""
+            
         return {
             "required": {
                 "folder_path": ("STRING", {
-                    "default": "", 
+                    "default": default_folder, 
                     "multiline": False,
                     "tooltip": "Path to folder containing images"
                 }),
@@ -40,7 +47,7 @@ class ContactSheetImageLoader:
                     "tooltip": "Select image 1-8 from the contact sheet"
                 }),
                 "thumbnail_size": ("INT", {
-                    "default": 128,
+                    "default": 256,
                     "min": 64,
                     "max": 512,
                     "step": 16,
