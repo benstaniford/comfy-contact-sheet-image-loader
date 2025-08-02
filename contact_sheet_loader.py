@@ -24,6 +24,7 @@ class ContactSheetImageLoader:
         self.last_folder = None
         self.last_trigger = None
         self.last_rows = None
+        self.last_folder_mtime = None
         self.cached_images = []
         
     @classmethod
@@ -240,16 +241,26 @@ class ContactSheetImageLoader:
         else:
             source_key = load_trigger
         
+        # Get current folder modification time
+        current_folder_mtime = None
+        if os.path.exists(folder_path):
+            try:
+                current_folder_mtime = os.path.getmtime(folder_path)
+            except OSError:
+                current_folder_mtime = None
+        
         # Check if we need to refresh the image list
         if (self.last_folder != folder_path or 
             self.last_trigger != source_key or 
             self.last_rows != rows or
+            self.last_folder_mtime != current_folder_mtime or
             not self.cached_images):
             
             self.cached_images = self.get_recent_images(folder_path, max_images)
             self.last_folder = folder_path
             self.last_trigger = source_key
             self.last_rows = rows
+            self.last_folder_mtime = current_folder_mtime
         
         # Create the contact sheet
         contact_sheet = self.create_contact_sheet(self.cached_images, thumbnail_size, rows)
